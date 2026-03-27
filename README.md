@@ -40,3 +40,14 @@ This project implements a complete loop: **Vector Embedding** → **FAISS Retrie
     ```env
     GEMINI_API_KEY=your_actual_key_here
     ```
+
+##   code Review Observations:
+*   `gemini-2.5-flash` is suitable for RAG due to low latency and high reasoning capabilities.
+*   Using `float32` for the `embeddings_matrix` balances memory usage and search precision.
+*   The prompt instructs the model to use only the provided context to reduce hallucinations.
+
+Consider adding a "chunking" strategy to handle larger text files or integrating a web interface using [Streamlit](https://streamlit.io).
+
+
+
+
