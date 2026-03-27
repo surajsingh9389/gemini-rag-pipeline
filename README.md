@@ -46,7 +46,8 @@ This project implements a complete loop: **Vector Embedding** → **FAISS Retrie
 *   Using `float32` for the `embeddings_matrix` balances memory usage and search precision.
 *   The prompt instructs the model to use only the provided context to reduce hallucinations.
 
-Consider adding a "chunking" strategy to handle larger text files or integrating a web interface using [Streamlit](https://streamlit.io).
+##   Future improvements
+Considering adding a "chunking" strategy to handle larger text files or integrating a web interface using [Streamlit](https://streamlit.io).
 
 
 
