@@ -21,7 +21,7 @@ class VectorStore:
         distances, indices = self.index.search(query_vec, top_k)
         
         # Retrieve context 
-        retrieved_chunks = [self.chunks[i] for i in indices[0] if i != -1]
+        retrieved_chunks = [(distances[0][j], self.chunks[i]) for j, i in enumerate(indices[0]) if i != -1]
         
         return retrieved_chunks
         
