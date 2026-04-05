@@ -8,13 +8,10 @@ from llm_generation import LLMModel
 with open("sentences.txt", "r") as file:
   sentences = file.read()
 
-# print(sentences)
-
 # Run pipeline 
 pipeline = ChunkingPipeline(20, 1)
 chunks = pipeline.run_pipeline(sentences, "Human History", "internet")
 
-# print(chunks)
 
 # Extract text only 
 chunk_texts = [chunk["text"] for chunk in chunks]
