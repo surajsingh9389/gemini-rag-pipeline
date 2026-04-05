@@ -45,6 +45,12 @@ Raw text is transformed into manageable segments using a multi-step pipeline:
     ```bash
     pip install -r requirements.txt
     ```
+3. Run Project:
+
+    ```bash
+    .venv/Scripts/activate
+    python src/main.py
+    ```
 
 
 
