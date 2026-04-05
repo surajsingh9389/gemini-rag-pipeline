@@ -1,28 +1,38 @@
 # 🚀 Rapid-Context-RAG
 
-A high-performance **Retrieval-Augmented Generation (RAG)** pipeline that uses semantic search to ground LLM responses in custom data.
+A high-performance, modular **Retrieval-Augmented Generation (RAG)** pipeline built with **Hugging Face Transformers** and **FAISS**. This project implements a complete local loop: **Intelligent Chunking** → **Vector Embedding** → **Semantic Retrieval** → **Grounded Generation**.
 
-This project implements a complete loop: **Vector Embedding** → **FAISS Retrieval** → **Contextual Generation**.
-
-## 🌟 Key Updates
-*   **Full RAG Integration:** Now generates natural language answers instead of just retrieving raw text.
-*   **Gemini 2.5 Flash:** Powered by the latest [Google Gen AI SDK](https://google.devgemini-api/docs/libraries) for lightning-fast, context-aware responses.
-*   **Optimized Retrieval:** Uses `IndexFlatIP` for cosine-based similarity matching in sub-milliseconds.
+## 🌟 Key Technical Features
+*   **End-to-End Hugging Face Integration:** Leverages `sentence-transformers` for local vectorization and `transformers` (FLAN-T5) for neural text generation.
+*   **Advanced Chunking Pipeline:** Implements a sliding window strategy with configurable overlap (`overlap_k`) to maintain semantic continuity across segments.
+*   **High-Performance Vector Store:** Uses **FAISS** (`IndexFlatIP`) with **L2 Normalization** to achieve high-precision **Cosine Similarity** matching in sub-milliseconds.
+*   **Grounded Generation:** A custom prompt engineering framework ensures the LLM answers strictly based on retrieved context, effectively eliminating hallucinations.
+*   **Data Quality Control:** Built-in validation logic filters "noisy" chunks based on symbol-to-text ratios and word count constraints.
 
 ## 🛠️ Tech Stack
-*   **LLM:** `gemini-2.5-flash` for high-speed response generation.
-*   **Embeddings:** `gemini-embedding-001` (3072-dimensional vectors).
-*   **Vector DB:** [FAISS](https://github.com) (Facebook AI Similarity Search).
-*   **Processing:** [NumPy](https://numpy.org) for L2 normalization and matrix operations.
+*   **LLM (Generation):** `google/flan-t5-base` (Hugging Face)
+*   **Embeddings:** `all-MiniLM-L6-v2` (384-dimensional vectors)
+*   **Vector DB:** [FAISS](https://github.com) (Facebook AI Similarity Search)
+*   **Data Processing:** [NumPy](https://numpy.org) for matrix operations and L2 Normalization
+*   **Language:** Python 3.x
 
-## 📈 Pipeline Architecture
-1.  **Ingestion:** Reads `sentences.txt` and generates embeddings via the [Gemini API](https://google.dev).
-2.  **Normalization:** Vectors are L2-normalized using NumPy to ensure accurate similarity scoring.
-3.  **Indexing:** Normalized vectors are stored in a FAISS `IndexFlatIP` database.
-4.  **Generation:**
-    *   The user query is embedded and searched against the index.
-    *   Top 5 relevant snippets are retrieved as context.
-    *   Gemini 2.5 Flash synthesizes a final answer based **ONLY** on that context.
+## 📈 System Architecture
+
+### 1. Ingestion & Preprocessing (`chunking_pipeline.py`)
+Raw text is transformed into manageable segments using a multi-step pipeline:
+- **Sentence Splitting:** Breaks text into individual sentences.
+- **Sliding Window Chunking:** Groups sentences into chunks of defined size with overlapping context.
+- **Validation:** Filters out low-quality chunks (e.g., too short or high noise-to-text ratio).
+- **Metadata Tagging:** Attaches source and title info to every chunk.
+
+### 2. Vectorization & Storage (`text_embedding.py`, `store_vector.py`)
+- **Embedding:** Chunks are converted into 384-dimensional dense vectors using a local Transformer model.
+- **Indexing:** Vectors are L2-normalized and stored in a FAISS `IndexFlatIP` index, enabling ultra-fast similarity searches.
+
+### 3. RAG Execution (`rag_system.py`, `llm_generation.py`, `build_prompt.py`)
+- **Retrieval:** User queries are embedded and searched against the FAISS index to find the `top_k` most relevant context snippets.
+- **Augmentation:** A prompt is dynamically constructed by injecting the retrieved context into a structured template.
+- **Generation:** The FLAN-T5 model synthesizes a final, human-readable response based **ONLY** on the provided context.
 
 ## 🔧 Installation
 1.  Clone the repository:
@@ -35,20 +45,6 @@ This project implements a complete loop: **Vector Embedding** → **FAISS Retrie
     ```bash
     pip install -r requirements.txt
     ```
-3.  Set up your `.env` file:
-
-    ```env
-    GEMINI_API_KEY=your_actual_key_here
-    ```
-
-##   code Review Observations:
-*   `gemini-2.5-flash` is suitable for RAG due to low latency and high reasoning capabilities.
-*   Using `float32` for the `embeddings_matrix` balances memory usage and search precision.
-*   The prompt instructs the model to use only the provided context to reduce hallucinations.
-
-##   Future improvements
-Considering adding a "chunking" strategy to handle larger text files or integrating a web interface using [Streamlit](https://streamlit.io).
-
 
 
 
